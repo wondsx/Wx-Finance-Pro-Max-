@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es-CO" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b1220">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Wx Financiero">
+    <meta name="description" content="Wx Financiero — centro de mando financiero personal: bolsillos, presupuesto quincenal, metas, deudas y catálogo de deseos. Funciona offline.">
+    <title>Wx Financiero</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="stylesheet" href="style.css">
+    <script>(function(){try{var t=localStorage.getItem('wx-financiero-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+</head>
+<body>
+<div class="app-shell">
+    <header class="topbar">
+        <div class="brand"><h1 id="pageTitle">Dashboard</h1><p id="pageSubtitle">Centro de mando financiero institucional</p></div>
+        <div class="toolbar"><button class="ghost-btn btn secondary" id="backupTopBtn" type="button">Backup</button><button class="ghost-btn btn secondary" id="themeToggle" type="button">☾</button></div>
+    </header>
+    
+    <main class="main">
+        <section class="view active" id="dashboard" data-title="Dashboard" data-subtitle="Resumen, misión y acceso rápido">
+            <div class="hero">
+                <article class="hero-card dashboard-premium">
+                    <div>
+                        <div class="hero-label">Disponible</div>
+                        <div class="hero-amount money" id="dashDisponible">$0</div>
+                        <div class="hero-total money" id="dashSaldoTotal">Total Bolsillos: $0</div>
+                        
+                        <div class="quick-actions">
+                            <button class="q-btn" type="button" data-quick="INGRESO"><span class="icon">📥</span><span class="txt">Ingreso</span></button>
+                            <button class="q-btn" type="button" data-quick="GASTO"><span class="icon">💸</span><span class="txt">Gasto rápido</span></button>
+                            <button class="q-btn" type="button" data-quick="TRANSFERENCIA"><span class="icon">🔁</span><span class="txt">Mover plata</span></button>
+                            <button class="q-btn" type="button" data-quick="TRAMACAZO"><span class="icon">🐍</span><span class="txt">Tramacazo</span></button>
+                        </div>
+                    </div>
+                    <div class="donut" id="dashDonut"><span id="dashPct">0%</span></div>
+                </article>
+            </div>
+            <div class="stats-grid">
+                <article class="stat"><div class="label">Misión</div><div class="value" id="dashMissionTitle">Liquidar deuda</div><div class="hint" id="dashMissionHint">Progreso: 0%</div></article>
+                <article class="stat"><div class="label">Faltante</div><div class="value money" id="dashMissionGap">$0</div><div class="hint">Deuda prioritaria activa</div></article>
+                <article class="stat"><div class="label">Quincena</div><div class="value" id="dashQuincena">-</div><div class="hint">Configuración global</div></article>
+                <article class="stat"><div class="label">Deseos</div><div class="value money" id="dashWishCount">0</div><div class="hint">Catálogo anti-impulso</div></article>
+            </div>
+            <div class="grid-2">
+                <article class="card"><div class="section-title"><h3>Saldos por bolsillo</h3><span>Vista rápida</span></div><div class="list" id="dashWallets"></div></article>
+                <article class="card"><div class="section-title"><h3>Categorías críticas</h3><span>Top seguimiento</span></div><div class="list" id="dashCriticalCats"></div></article>
+            </div>
+        </section>
+
+        <section class="view" id="cajero" data-title="Cajero" data-subtitle="Registro ultrarrápido y preciso">
+            <article class="card">
+                <div class="section-title"><h3>Nuevo movimiento</h3><span>Motor transaccional activo</span></div>
+                <div class="cajero-mode-bar">
+                    <span id="cajModeLabel" class="cajero-mode-badge" style="background:linear-gradient(135deg,rgba(56,202,255,.16),rgba(114,128,255,.10));border:1px solid rgba(56,202,255,.22);color:var(--primary)">💸 Gasto</span>
+                    <span class="cajero-mode-hint" id="cajModeHint">Seleccione una categoría para comenzar</span>
+                </div>
+                <div class="cajero-shell">
+                    <div class="cajero-grid">
+                        <div class="cajero-slot half"><div class="field"><label for="cajFecha">Fecha</label><input id="cajFecha" type="date"></div></div>
+                        <div class="cajero-slot half"><div class="field"><label for="cajCategoriaBtn">Categoría</label><button class="select-trigger" id="cajCategoriaBtn" type="button"></button><input id="cajCategoria" type="hidden"></div></div>
+                        <div class="cajero-slot"><div class="field" id="cajConceptoRow"><label for="cajConcepto">Concepto</label><input id="cajConcepto" type="text" autocomplete="off" placeholder="Ej. mercado, pasajes"></div></div>
+                        <div class="cajero-slot half" id="cajBolsilloSlot"><div class="field" id="cajBolsilloRow"><label for="cajBolsilloBtn">Bolsillo</label><button class="select-trigger" id="cajBolsilloBtn" type="button"></button><input id="cajBolsillo" type="hidden"></div></div>
+                        <div class="cajero-slot half"><div class="field" id="cajValorRow"><label for="cajValor">Valor</label><input id="cajValor" type="text" inputmode="numeric" autocomplete="off" placeholder="0"></div></div>
+                        <div class="cajero-slot half" id="cajOrigenSlot"><div class="field" id="cajOrigenRow"><label for="cajOrigenBtn">Bolsillo origen</label><button class="select-trigger" id="cajOrigenBtn" type="button"></button><input id="cajOrigen" type="hidden"></div></div>
+                        <div class="cajero-slot half" id="cajDestinoSlot"><div class="field" id="cajDestinoRow"><label for="cajDestinoBtn">Bolsillo destino</label><button class="select-trigger" id="cajDestinoBtn" type="button"></button><input id="cajDestino" type="hidden"></div></div>
+                        <div class="cajero-slot" id="cajDeudaSlot"><div class="field" id="cajDeudaRow"><label for="cajDeudaBtn">🎯 ¿A qué deuda le va a dar el Tramacazo?</label><button class="select-trigger" id="cajDeudaBtn" type="button"></button><input id="cajDeuda" type="hidden"></div></div>
+                        <div class="cajero-slot" id="cajDeseoSlot"><div class="field" id="cajDeseoRow"><label for="cajDeseoBtn">✨ ¿Qué deseo del catálogo vas a pagar?</label><button class="select-trigger" id="cajDeseoBtn" type="button"></button><input id="cajDeseo" type="hidden"></div></div>
+                    </div>
+                    <div class="cajero-meta">
+                        <div class="note" id="cajRiskNote">⚠️ FONDO RIESGO: el origen debe ser NEQUI. El destino solo puede ser TARJETA o BILLETERA.</div>
+                        <div class="note" id="cajSaldoRef">Seleccione una categoría.</div>
+                    </div>
+                </div>
+                <div class="actions"><button class="btn primary" id="cajConfirmarBtn" type="button">Confirmar</button><button class="btn secondary" id="cajLimpiarBtn" type="button">Limpiar</button></div>
+            </article>
+        </section>
+
+        <section class="view" id="plan" data-title="Plan" data-subtitle="Desglose quincenal por categoría">
+            <article class="card"><div class="section-title"><h3>Presupuesto por categorías</h3><span>Periodo activo</span></div><div class="table-wrap"><table><thead><tr><th>Categoría</th><th>Gastado</th><th>Presupuesto</th><th>Disponible</th><th>Quincena</th><th>Estado</th></tr></thead><tbody id="planBody"></tbody></table></div></article>
+        </section>
+
+        <section class="view" id="historial" data-title="Historial" data-subtitle="Movimientos reversibles matemáticamente">
+            <article class="card"><div class="section-title"><h3>Movimientos registrados</h3><span>Eliminar revierte el estado</span></div>
+                <div class="cajero-grid" style="margin-bottom:14px">
+                    <div class="cajero-slot"><div class="field"><label for="histSearch">Buscar</label><input id="histSearch" type="search" autocomplete="off" placeholder="Concepto, categoría o bolsillo..."></div></div>
+                    <div class="cajero-slot half"><div class="field"><label for="filtroQuincenaBtn">Filtro quincena</label><button class="select-trigger" id="filtroQuincenaBtn" type="button"></button><input id="filtroQuincena" type="hidden"></div></div>
+                    <div class="cajero-slot half"><div class="field"><label for="filtroCategoriaBtn">Filtro categoría</label><button class="select-trigger" id="filtroCategoriaBtn" type="button"></button><input id="filtroCategoria" type="hidden"></div></div>
+                </div>
+                <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Concepto</th><th>Categoría</th><th>Valor</th><th>Bolsillo</th><th>Quincena</th><th>Acción</th></tr></thead><tbody id="historialBody"></tbody></table></div>
+            </article>
+        </section>
+
+        <section class="view" id="resumen" data-title="Resumen / Cierre" data-subtitle="Quincenas cerradas y operación de cierre">
+            <article class="card" style="margin-bottom:14px"><div class="section-title"><h3>Quincenas cerradas</h3><span>Historial de cierres</span></div><div class="table-wrap"><table><thead><tr><th>Quincena</th><th>Salario</th><th>Total gasto</th><th>Disponible</th></tr></thead><tbody id="resumenBody"></tbody></table></div></article>
+            <article class="card"><div class="section-title"><h3>Cierre de quincena</h3><span>Backup automático</span></div><div class="list"><div class="item"><div><strong>Periodo a cerrar</strong></div><span class="badge" id="cierrePeriodo">-</span></div><div class="item"><div><strong>Total bolsillos</strong></div><span class="badge money" id="cierreTotalBolsillos">$0</span></div><div class="item"><div><strong>Total gastado</strong></div><span class="badge danger money" id="cierreTotalGastado">$0</span></div></div><div class="actions"><button class="btn primary" id="previewCierreBtn" type="button">Previsualizar cierre</button></div></article>
+        </section>
+
+        <section class="view" id="metas" data-title="Metas" data-subtitle="Metas activas y deudas prioritarias"><div class="grid-3" id="metasGrid"></div><div class="section-title" style="margin-top:18px"><h3>Deudas activas</h3><span>Objetivos del Tramacazo</span></div><div class="debts-grid" id="debtsGrid"></div></section>
+
+        <section class="view" id="wishlist" data-title="Deseos" data-subtitle="Catálogo visual anti-impulso">
+            <article class="card" style="margin-bottom:18px">
+                <div class="section-title"><h3>Agregar nuevo antojo</h3><span>Foto, enlace y precio</span></div>
+                <div class="cajero-grid">
+                    <div class="cajero-slot">
+                        <div class="field"><label for="wNombre">¿Qué quieres comprar?</label><input id="wNombre" type="text" autocomplete="off" placeholder="Ej. Monitor OLED PG32UCDM"></div>
+                    </div>
+                    <div class="cajero-slot half">
+                        <div class="field"><label for="wPrecio">Precio estimado</label><input id="wPrecio" type="text" inputmode="numeric" autocomplete="off" placeholder="$ 0"></div>
+                    </div>
+                    <div class="cajero-slot half">
+                        <div class="field"><label for="wTienda">Enlace de la tienda</label><input id="wTienda" type="url" autocomplete="off" placeholder="https://..."></div>
+                    </div>
+                    <div class="cajero-slot">
+                        <div class="field"><label for="wImagen">URL de la imagen</label><input id="wImagen" type="url" autocomplete="off" placeholder="Pega el enlace a la foto del producto"></div>
+                    </div>
+                </div>
+                <div class="actions" style="margin-top: 16px;"><button class="btn primary" id="wAgregarBtn" type="button">Guardar en catálogo</button></div>
+            </article>
+            
+            <div class="section-title"><h3>Mi inventario</h3><span id="wTotalEstimado" class="money">Total: $0</span></div>
+            <div class="cajero-grid" style="margin-bottom:14px">
+                <div class="cajero-slot half"><div class="field"><label for="wOrdenBtn">Orden</label><button class="select-trigger" id="wOrdenBtn" type="button"></button><input id="wOrden" type="hidden" value="new"></div></div>
+                <div class="cajero-slot half"><div class="field"><label for="wPocketBuyBtn">Bolsillo rápido (Referencia)</label><button class="select-trigger" id="wPocketBuyBtn" type="button"></button><input id="wPocketBuy" type="hidden"></div></div>
+            </div>
+            
+            <div class="kpi-strip">
+                <div class="kpi-mini">
+                    <div class="kpi-icon" style="background: rgba(56,202,255,.15); color: var(--primary);">📦</div>
+                    <div class="kpi-data">
+                        <div class="k">Guardados</div>
+                        <div class="v money" id="wCountKpi">0</div>
+                    </div>
+                </div>
+                <div class="kpi-mini">
+                    <div class="kpi-icon" style="background: rgba(82,219,168,.15); color: var(--ok);">⚖️</div>
+                    <div class="kpi-data">
+                        <div class="k">Promedio</div>
+                        <div class="v money" id="wAvgKpi">$0</div>
+                    </div>
+                </div>
+                <div class="kpi-mini">
+                    <div class="kpi-icon" style="background: rgba(255,96,136,.15); color: var(--danger);">💎</div>
+                    <div class="kpi-data">
+                        <div class="k">Más caro</div>
+                        <div class="v money" id="wMaxKpi">$0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="wishlist-grid" id="wishlistGrid"></div>
+        </section>
+
+        <section class="view" id="ajustes" data-title="Ajustes" data-subtitle="CRUD completo y configuración global">
+            <article class="card" style="margin-bottom:14px">
+                <div class="section-title"><h3>Configuración global</h3></div>
+                <div class="cajero-grid">
+                    <div class="cajero-slot half"><div class="field"><label for="ajSueldo">Sueldo mensual</label><input id="ajSueldo" type="text" inputmode="numeric" autocomplete="off"></div></div>
+                    <div class="cajero-slot half"><div class="field"><label for="ajQuincenaBtn">Quincena activa</label><button class="select-trigger" id="ajQuincenaBtn" type="button"></button><input id="ajQuincena" type="hidden"></div></div>
+                    <div class="cajero-slot half"><div class="field"><label for="ajMetaPrioritariaBtn">Meta / deuda prioritaria</label><button class="select-trigger" id="ajMetaPrioritariaBtn" type="button"></button><input id="ajMetaPrioritaria" type="hidden"></div></div>
+                    <div class="cajero-slot half"><div class="field"><label for="ajBolsilloPrincipalBtn">Bolsillo principal (cierre)</label><button class="select-trigger" id="ajBolsilloPrincipalBtn" type="button"></button><input id="ajBolsilloPrincipal" type="hidden"></div></div>
+                </div>
+                <div class="actions" style="margin-top: 14px;"><button class="btn primary" id="guardarGlobalBtn" type="button">Guardar configuración</button></div>
+            </article>
+            
+            <article class="card" style="margin-bottom:14px"><div class="section-title"><h3>Bolsillos</h3><button class="btn secondary sm" id="nuevoBolsilloBtn" type="button">+ Nuevo</button></div><div class="list" id="walletsCrud"></div></article>
+            <article class="card" style="margin-bottom:14px"><div class="section-title"><h3>Categorías</h3><button class="btn secondary sm" id="nuevaCategoriaBtn" type="button">+ Nueva</button></div><div class="list" id="catsCrud"></div></article>
+            <article class="card" style="margin-bottom:14px"><div class="section-title"><h3>Metas</h3><button class="btn secondary sm" id="nuevaMetaBtn" type="button">+ Nueva</button></div><div class="list" id="goalsCrud"></div></article>
+            <article class="card" style="margin-bottom:14px"><div class="section-title"><h3>Deudas</h3><button class="btn secondary sm" id="nuevaDeudaBtn" type="button">+ Nueva deuda</button></div><div class="list" id="debtsCrud"></div></article>
+            <article class="card">
+                <div class="section-title"><h3>Zona de peligro</h3></div>
+                <div class="actions">
+                    <button class="btn secondary" id="exportarJsonBtn" type="button">Exportar JSON</button>
+                    <button class="btn secondary" id="importarJsonBtn" type="button">Importar JSON</button>
+                    <button class="btn danger-btn" id="resetDbBtn" type="button">⚠️ Resetear sistema</button>
+                </div>
+                <input id="importFileInput" type="file" accept="application/json" hidden>
+            </article>
+        </section>
+    </main>
+
+    <nav class="nav-bottom" aria-label="Navegación principal">
+        <div class="nav-scroll">
+            <button class="tab-btn active" data-tab="dashboard" type="button"><span class="icon">🏠</span><span class="txt">Dashboard</span></button>
+            <button class="tab-btn" data-tab="cajero" type="button"><span class="icon">⚡</span><span class="txt">Cajero</span></button>
+            <button class="tab-btn" data-tab="plan" type="button"><span class="icon">📋</span><span class="txt">Plan</span></button>
+            <button class="tab-btn" data-tab="historial" type="button"><span class="icon">📜</span><span class="txt">Historial</span></button>
+            <button class="tab-btn" data-tab="metas" type="button"><span class="icon">🎯</span><span class="txt">Metas</span></button>
+            <button class="tab-btn" data-tab="wishlist" type="button"><span class="icon">✨</span><span class="txt">Deseos</span></button>
+            <button class="tab-btn" data-tab="resumen" type="button"><span class="icon">📊</span><span class="txt">Resumen</span></button>
+            <button class="tab-btn" data-tab="ajustes" type="button"><span class="icon">⚙️</span><span class="txt">Ajustes</span></button>
+        </div>
+    </nav>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box" id="modalBox">
+        <div class="modal-header">
+            <h3 id="modalTitle"></h3>
+            <button class="close-btn" type="button" data-close-modal="1">✕</button>
+        </div>
+        <div id="modalBody"></div>
+        <div class="actions" id="modalActions"></div>
+    </div>
+</div>
+
+<div class="sheet-overlay" id="sheetOverlay">
+    <div class="sheet-box" id="sheetBox">
+        <div class="modal-header">
+            <h3 id="sheetTitle"></h3>
+            <button class="close-btn" type="button" data-close-sheet="1">✕</button>
+        </div>
+        <div id="sheetBody"></div>
+        <div class="actions" id="sheetActions"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js" defer></script>
+</body>
+</html>

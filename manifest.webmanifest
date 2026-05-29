@@ -1,0 +1,18 @@
+{
+  "name": "Wx Financiero",
+  "short_name": "Wx Financiero",
+  "description": "Centro de mando financiero personal: bolsillos, presupuesto quincenal, metas, deudas y catálogo de deseos. Funciona sin conexión.",
+  "lang": "es-CO",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#080e1c",
+  "theme_color": "#0b1220",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
